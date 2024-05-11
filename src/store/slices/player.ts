@@ -64,6 +64,7 @@ export const playerSlice = createSlice({
       }
     },
   },
+  // terste
   extraReducers(builder) {
     builder.addCase(loadCourse.fulfilled, (state, action) => {
       state.course = action.payload;
