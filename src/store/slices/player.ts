@@ -19,12 +19,14 @@ export interface PlayerState {
   course: Course | null;
   currentModuleIndex: number;
   currentLessonIndex: number;
+  isLoading: boolean;
 }
 
 const initialState: PlayerState = {
   course: null,
   currentModuleIndex: 0,
   currentLessonIndex: 0,
+  isLoading: true,
 };
 
 export const loadCourse = createAsyncThunk("player/load", async () => {
@@ -38,13 +40,10 @@ export const playerSlice = createSlice({
   initialState,
 
   reducers: {
-
-
     play: (state, action: PayloadAction<[number, number]>) => {
       state.currentModuleIndex = action.payload[0];
       state.currentLessonIndex = action.payload[1];
     },
-
 
     next: (state) => {
       const nextLessonIndex = state.currentLessonIndex + 1;
@@ -52,9 +51,7 @@ export const playerSlice = createSlice({
         state.course?.modules[state.currentModuleIndex].lessons[
           nextLessonIndex
         ];
-        state.course?.modules[state.currentModuleIndex].lessons[
-          nextLessonIndex
-        ];
+      state.course?.modules[state.currentModuleIndex].lessons[nextLessonIndex];
 
       if (nextLesson) {
         state.currentLessonIndex = nextLessonIndex;
@@ -69,17 +66,20 @@ export const playerSlice = createSlice({
       }
     },
   },
-  // terste
   extraReducers(builder) {
+    builder.addCase(loadCourse.pending, (state) => {
+      state.isLoading = true;
+    });
+
     builder.addCase(loadCourse.fulfilled, (state, action) => {
       state.course = action.payload;
+      state.isLoading = false;
     });
   },
 });
 
 export const { play, next } = playerSlice.actions;
 export const player = playerSlice.reducer;
-
 
 export const useCurrentLesson = () => {
   return useAppSelector((state) => {
