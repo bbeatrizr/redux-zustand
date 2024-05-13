@@ -25,6 +25,7 @@ export interface PlayerState {
   load: () => Promise<void>;
 }
 
+
 export const useStore = create<PlayerState>((set, get) => {
   return {
     course: null,
